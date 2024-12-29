@@ -23,6 +23,7 @@ func main() {
 
 		if err := errors.Join(errs...); err != nil {
 			logger.Error("Test failed", "err", err.Error(), "errors", errs)
+			continue
 		}
 
 		logger.Info("Test done", "serverID", s.ID, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
