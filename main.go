@@ -36,7 +36,6 @@ func main() {
 
 	for _, s := range targets {
 		var errs []error
-		errs = append(errs, s.PingTest(nil))
 		errs = append(errs, s.DownloadTest())
 		errs = append(errs, s.UploadTest())
 
@@ -44,7 +43,7 @@ func main() {
 			logger.Error("Test failed", "err", err.Error(), "errors", errs)
 		}
 
-		logger.Info("Test done", "serverID", s.ID, "latency", s.Lat, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
+		logger.Info("Test done", "serverID", s.ID, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
 		s.Context.Reset() // reset counter
 	}
 }
