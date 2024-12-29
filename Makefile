@@ -1,7 +1,7 @@
 .PHONY: build
 
 build:
-	go build -o speedo main.go
+	go build -o speedo cmd/speedo/main.go
 
 update:
 	git pull
