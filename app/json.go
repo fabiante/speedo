@@ -9,9 +9,9 @@ import (
 )
 
 type LogLine struct {
-	Time         time.Time `json:"time"`
-	DownloadMbps float64   `json:"downloadMbps"`
-	UploadMbps   float64   `json:"uploadMbps"`
+	Time                       time.Time `json:"time"`
+	DownloadMegabytesPerSecond string    `json:"downloadMegabytesPerSecond"`
+	UploadMegabytesPerSecond   string    `json:"uploadMegabytesPerSecond"`
 }
 
 func DecodeLog(r io.Reader) ([]*LogLine, error) {

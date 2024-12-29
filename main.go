@@ -60,8 +60,8 @@ func csv(args []string) {
 	for _, line := range lines {
 		writer.Write([]string{
 			line.Time.Format("01.02.2006 15:04"),
-			fmt.Sprintf("%f", line.DownloadMbps),
-			fmt.Sprintf("%f", line.UploadMbps),
+			line.DownloadMegabytesPerSecond,
+			line.UploadMegabytesPerSecond,
 		})
 	}
 }
@@ -86,7 +86,15 @@ func run() {
 			continue
 		}
 
-		logger.Info("Test done", "serverID", s.ID, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
+		logger.Info(
+			"Test done",
+			"serverID",
+			s.ID,
+			"downloadMegabytesPerSecond",
+			s.DLSpeed.Byte(speedtest.UnitTypeDecimalBytes),
+			"uploadMegabytesPerSecond",
+			s.ULSpeed.Byte(speedtest.UnitTypeDecimalBytes),
+		)
 		s.Context.Reset() // reset counter
 	}
 }
