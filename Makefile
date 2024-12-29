@@ -1,6 +1,6 @@
-.PHONY: make
+.PHONY: build
 
-make:
+build:
 	go build -o speedo main.go
 
 update:
