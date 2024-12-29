@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"log/slog"
 	"os"
 
@@ -31,15 +32,18 @@ func main() {
 	// server, err := speedtest.FetchServerByID("28910")
 
 	serverList, _ := speedtestClient.FetchServers()
-	targets, _ := serverList.FindServer([]int{61387, 5747, 44599, 4087, 8827})
+	targets, _ := serverList.FindServer([]int{61387})
 
 	for _, s := range targets {
-		// Please make sure your host can access this test server,
-		// otherwise you will get an error.
-		// It is recommended to replace a server at this time
-		s.PingTest(nil)
-		s.DownloadTest()
-		s.UploadTest()
+		var errs []error
+		errs = append(errs, s.PingTest(nil))
+		errs = append(errs, s.DownloadTest())
+		errs = append(errs, s.UploadTest())
+
+		if err := errors.Join(errs...); err != nil {
+			logger.Error("Test failed", "err", err.Error(), "errors", errs)
+		}
+
 		logger.Info("Test done", "serverID", s.ID, "latency", s.Lat, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
 		s.Context.Reset() // reset counter
 	}
