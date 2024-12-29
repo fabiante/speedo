@@ -1,12 +1,14 @@
 package main
 
 import (
+	csv2 "encoding/csv"
 	"errors"
 	"fmt"
 	"log/slog"
 	"os"
 	"strings"
 
+	"github.com/fabiante/speedo/app"
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
@@ -25,9 +27,42 @@ func main() {
 	switch cmd {
 	case "run":
 		run()
+	case "csv":
+		csv(args)
 	default:
 		fmt.Println("Unknown command", "cmd", cmd)
 		os.Exit(1)
+	}
+}
+
+func csv(args []string) {
+	filePath := args[0]
+
+	file, err := os.OpenFile(filePath, os.O_RDONLY, 0)
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	lines, err := app.DecodeLog(file)
+	if err != nil {
+		panic(err)
+	}
+
+	writer := csv2.NewWriter(os.Stdout)
+	writer.Comma = ';'
+	writer.UseCRLF = true
+	defer writer.Flush()
+
+	writer.Write([]string{"time", "downloadMbps", "uploadMbps"})
+
+	for _, line := range lines {
+		writer.Write([]string{
+			line.Time.Format("01.02.2006 15:04"),
+			fmt.Sprintf("%f", line.DownloadMbps),
+			fmt.Sprintf("%f", line.UploadMbps),
+		})
 	}
 }
 
