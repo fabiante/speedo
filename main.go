@@ -2,11 +2,14 @@ package main
 
 import (
 	"log/slog"
+	"os"
 
 	"github.com/showwin/speedtest-go/speedtest"
 )
 
 func main() {
+	var logger = slog.New(slog.NewJSONHandler(os.Stdout, nil))
+
 	var speedtestClient = speedtest.New()
 
 	// Use a proxy for the speedtest. eg: socks://127.0.0.1:7890
@@ -37,7 +40,7 @@ func main() {
 		s.PingTest(nil)
 		s.DownloadTest()
 		s.UploadTest()
-		slog.Info("Test done", "serverID", s.ID, "latency", s.Lat, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
+		logger.Info("Test done", "serverID", s.ID, "latency", s.Lat, "downloadMbps", s.DLSpeed.Mbps(), "uploadMbps", s.ULSpeed.Mbps())
 		s.Context.Reset() // reset counter
 	}
 }
